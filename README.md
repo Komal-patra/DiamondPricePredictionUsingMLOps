@@ -7,3 +7,14 @@ End-to-End Machine Learning using MLflow
     ```
     python template.py
     ```
+
+2. In order to automatically install the packages and to create the new conda environment, run the below given command:
+
+    ```
+    bash init_setup.sh
+    ```
+
+    In order to activate the conda environment:
+    ```
+    conda activate env
+    ```
