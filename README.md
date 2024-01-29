@@ -16,5 +16,5 @@ End-to-End Machine Learning using MLflow
 
     In order to activate the conda environment:
     ```
-    conda activate env
+    conda activate ./env
     ```
