@@ -6,12 +6,13 @@ from pathlib import Path
 list_of_files = [
     ".github/workflows/.gitkeep",
     "src/__init__.py",
+    
     #creating a component folder as all the components files are stored here
     "src/components/__init__.py",
-    "src/components/data_ingestion",
-    "src/components/data_transformation",
-    "src/components/model_trainer",
-    "src/components/model_evaluation",
+    "src/components/data_ingestion.py",
+    "src/components/data_transformation.py",
+    "src/components/model_trainer.py",
+    "src/components/model_evaluation.py",
     "src/pipeline/__init__.py",
     "src/pipeline/training_pipeline",
     "src/pipeline/prediction_pipeline",
