@@ -1,24 +1,19 @@
-import sys
+import logging
+import os
+from datetime import datetime
 
-class customexception(Exception):
+LOG_FILE=f"{datetime.now().strftime('%m_%d_%Y_%H_%M_%S')}.log"
 
-    def __init__(self,error_message,error_details:sys):
-        self.error_message=error_message
-        _,_,exc_tb=error_details.exc_info()
-        print(exc_tb)
+log_path=os.path.join(os.getcwd(),"logs")
 
-        self.lineno=exc_tb.tb_lineno
-        self.file_name=exc_tb.tb_frame.f_code.co_filename
+os.makedirs(log_path,exist_ok=True)
 
-    def __str__(self):
-        return "Error occured in python script name [{0}] line number [{1}] error message [{2}]".format(
-        self.file_name, self.lineno, str(self.error_message))
+LOG_FILEPATH=os.path.join(log_path,LOG_FILE)
 
 
-if __name__=="__main__":
-    try:
-        a=1/0
-
-    except Exception as e:
-        #print(e)
-        raise customexception(e,sys)
+logging.basicConfig(level=logging.INFO, 
+                    filename=LOG_FILEPATH,
+                    format="[%(asctime)s] %(lineno)d %(name)s - %(levelname)s - %(message)s"
+                    
+)
+            #[2024-01-10 15:57:26,997] 6 root - INFO -  this my second tesgting
