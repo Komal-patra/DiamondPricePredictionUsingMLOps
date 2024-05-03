@@ -127,7 +127,8 @@ venv/
 ENV/
 env.bak/
 venv.bak/
-
+.diamondml
+diamondml/
 # Spyder project settings
 .spyderproject
 .spyproject
