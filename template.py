@@ -2,7 +2,7 @@
 import os
 from pathlib import Path
 
-package_name = "neurolab-mongodb-python"
+package_name = "DiamondPrediction"
 
 list_of_files = [
    ".github/workflows/ci.yaml",
