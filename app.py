@@ -40,6 +40,5 @@ def predict_datapoint():
 
         return render_template("result.html", final_result=result, model_score=round(ModelTrainer().initate_model_trainin()*100, 2))
     
-
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000)
