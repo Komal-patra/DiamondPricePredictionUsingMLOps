@@ -12,10 +12,10 @@ from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OrdinalEncoder,StandardScaler
-
 from GemstonePricePrediction.utils.utils import save_object
 
 
+@dataclass
 class DataTransformationConfig:
     preprocessor_obj_file_path = os.path.join('artifacts','preprocessor.pkl')
 
@@ -26,7 +26,7 @@ class DataTransformation:
     def get_data_transformation(self):
         try:
 
-            logging.infor('Data trnsformation stage started')
+            logging.info('Data trnsformation stage started')
 
             # defining categorical and numerical columns
             categorical_cols = ['cut', 'color','clarity']
