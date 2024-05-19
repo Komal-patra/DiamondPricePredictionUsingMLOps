@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Komal_notes/ML_proj/DiamondPricePredictionUsingMLOps/mlruns/0/cdc43576024a46828c9561a3964f6e39/artifacts
+end_time: 1716137641096
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: cdc43576024a46828c9561a3964f6e39
+run_name: selective-mare-850
+run_uuid: cdc43576024a46828c9561a3964f6e39
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1716137637345
+status: 3
+tags: []
+user_id: Administrator

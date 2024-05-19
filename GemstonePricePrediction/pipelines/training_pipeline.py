@@ -1,5 +1,9 @@
 import os
 import sys
+
+# Add the project root directory to the PYTHONPATH
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
+
 from GemstonePricePrediction.logger import logging
 from GemstonePricePrediction.exception import CustomException
 import pandas as pd

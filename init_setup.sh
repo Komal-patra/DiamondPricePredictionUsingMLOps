@@ -9,7 +9,7 @@ conda create -n diamondml python=3.8 -y
 
 echo [$(date)]: "activating the environment" 
 
-source activate diamondml
+conda activate diamondml
 
 echo [$(date)]: "installing the dev requirements" 
 

@@ -29,7 +29,7 @@ class ModelTrainer:
             )
 
             models = {
-                'LinearRefression': LinearRegression(),
+                'LinearRegression': LinearRegression(),
                 'Lasso': Lasso(),
                 'Ridge': Ridge(),
                 'ElasticNet':ElasticNet()
