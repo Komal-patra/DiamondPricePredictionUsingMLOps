@@ -1,0 +1,7 @@
+version: "2"
+services:
+  application:
+    build: .
+    container_name: GemstonePricePrediction
+    ports:
+      - "8080:8080"
