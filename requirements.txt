@@ -1,5 +1,12 @@
-apache-airflow==2.3.0
-pendulum==2.1.2
+apache-airflow
+pendulum
 flask
 pandas
 numpy
+scikit-learn
+seaborn 
+mlflow
+dvc
+ipykernel
+xgboost
+-e .

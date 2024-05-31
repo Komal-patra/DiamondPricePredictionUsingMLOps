@@ -5,7 +5,7 @@ with open('README.md', 'r', encoding='utf-8') as f:
 
 __version__ = "0.0.9"
 REPO_NAME = "DiamondPricePredictionUsingMLOps"
-PKG_NAME= "DiamondPricePredictionUsingMLOps"
+PKG_NAME= "GemstonePricePrediction"
 AUTHOR_USER_NAME = "Komal-patra"
 AUTHOR_EMAIL = "komalfsds2022@gmail.com"
 
