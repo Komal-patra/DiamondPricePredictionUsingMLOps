@@ -55,12 +55,12 @@ then run command one by one
 
 AWS_ACCESS_KEY_ID=ASIATUYJP7SUIHZFAD6P
 
-AWS_SECRET_ACCESS_KEY=zzRWMQ9cQSKC0PQhQyCJ2HIjYslyubzryMOs0RGL
+AWS_SECRET_ACCESS_KEY=
 
-AWS_REGION=us-east-1
+AWS_REGION=
 
-AWS_ECR_LOGIN_URI=250738637992.dkr.ecr.eu-west-1.amazonaws.com/gemstone_price_prediction
+AWS_ECR_LOGIN_URI=
 
-ECR_REPOSITORY_NAME=gemstone_price_prediction
+ECR_REPOSITORY_NAME=
 
-MONGO_DB_URL=mongodb+srv://avnish:Aa327030@cluster0.or68e.mongodb.net/admin?authSource=admin&replicaSet=atlas-desfdx-shard-0&w=majority&readPreference=primary&appname=MongoDB%20Compass&retryWrites=true&ssl=true
+
