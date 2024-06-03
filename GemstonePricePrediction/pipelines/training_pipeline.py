@@ -59,5 +59,5 @@ class TrainingPipeline:
         except Exception as e:
             raise CustomException(e, sys)
 
-#training_pipeline = TrainingPipeline()
-#training_pipeline.start_training()
+training_pipeline = TrainingPipeline()
+training_pipeline.start_training()
