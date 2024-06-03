@@ -1,84 +1,95 @@
-from __future__ import annotations
-import json
-from textwrap import dedent
-import pendulum
 from airflow import DAG
 from airflow.operators.python import PythonOperator
-from GemstonePricePrediction.pipelines.training_pipeline import TrainingPipeline
+from datetime import datetime, timedelta
+import numpy as np
+import pendulum
 
-training_pipeline=TrainingPipeline()
+# Import custom components
+from GemstonePricePrediction.components.data_ingestion import DataIngestion
+from GemstonePricePrediction.components.data_transformation import DataTransformation
+from GemstonePricePrediction.components.model_trainer import ModelTrainer
+from GemstonePricePrediction.components.model_evaluation import ModelEvaluation
+from GemstonePricePrediction.exception import CustomException
+from GemstonePricePrediction.logger import logging
+import sys
+
+def start_data_ingestion():
+    try:
+        data_ingestion = DataIngestion()
+        train_data_path, test_data_path = data_ingestion.initiate_data_ingestion()
+        logging.info("Data ingestion completed successfully.")
+        return {"train_data_path": train_data_path, "test_data_path": test_data_path}
+    except Exception as e:
+        logging.error("Error during data ingestion:", e)
+        raise CustomException(e, sys)
+
+def start_data_transformation(**kwargs):
+    try:
+        ti = kwargs['ti']
+        paths = ti.xcom_pull(task_ids='data_ingestion')
+        train_data_path = paths['train_data_path']
+        test_data_path = paths['test_data_path']
+
+        data_transformation = DataTransformation()
+        train_arr, test_arr = data_transformation.initialize_data_transformation(train_data_path, test_data_path)
+        logging.info("Data transformation completed successfully.")
+
+        return {
+            "train_arr": train_arr.tolist(),  # Convert numpy array to list
+            "test_arr": test_arr.tolist()  # Convert numpy array to list
+        }
+    except Exception as e:
+        logging.error("Error during data transformation:", e)
+        raise CustomException(e, sys)
+
+def start_model_training(**kwargs):
+    try:
+        ti = kwargs['ti']
+        arrays = ti.xcom_pull(task_ids='data_transformation')
+        train_arr = np.array(arrays['train_arr'])  # Convert list back to numpy array
+        test_arr = np.array(arrays['test_arr'])  # Convert list back to numpy array
+
+        model_trainer = ModelTrainer()
+        model_trainer.initiate_model_training(train_arr, test_arr)
+        logging.info("Model training completed successfully.")
+    except Exception as e:
+        logging.error("Error during model training:", e)
+        raise CustomException(e, sys)
+
+
 
 with DAG(
     "gemstone_training_pipeline",
-    default_args={"retries": 2},
-    description="it is my training pipeline",
-    schedule="@weekly",# here you can test based on hour or mints but make sure here you container is up and running
-    start_date=pendulum.datetime(2024, 1, 17, tz="UTC"),
+    default_args={
+        "owner": "airflow",
+        "retries": 2,
+        "retry_delay": timedelta(minutes=1),
+        "start_date": datetime(2024, 1, 17, tzinfo=pendulum.timezone("UTC")),
+        "email_on_failure": False,
+        "email_on_retry": False,
+    },
+    description="Training pipeline for Gemstone Price Prediction",
+    schedule_interval="@weekly",  # Weekly schedule
     catchup=False,
-    tags=["machine_learning ","classification","gemstone"],
+    tags=["machine_learning", "classification", "gemstone"],
 ) as dag:
-    
-    dag.doc_md = __doc__
-    
-    def data_ingestion(**kwargs):
-        ti = kwargs["ti"]
-        train_data_path,test_data_path=training_pipeline.start_data_ingestion()
-        ti.xcom_push("data_ingestion_artifact", {"train_data_path":train_data_path,"test_data_path":test_data_path})
 
-    def data_transformations(**kwargs):
-        ti = kwargs["ti"]
-        data_ingestion_artifact=ti.xcom_pull(task_ids="data_ingestion",key="data_ingestion_artifact") 
-        train_arr,test_arr=training_pipeline.start_data_transformation(data_ingestion_artifact["train_data_path"],data_ingestion_artifact["test_data_path"])
-        train_arr=train_arr.tolist()
-        test_arr=test_arr.tolist()
-        ti.xcom_push("data_transformations_artifcat", {"train_arr":train_arr,"test_arr":test_arr})
-
-    def model_trainer(**kwargs):
-        import numpy as np
-        ti = kwargs["ti"]
-        data_transformation_artifact = ti.xcom_pull(task_ids="data_transformation", key="data_transformations_artifcat")
-        train_arr=np.array(data_transformation_artifact["train_arr"])
-        test_arr=np.array(data_transformation_artifact["test_arr"])
-        training_pipeline.start_model_training(train_arr,test_arr)
-    
-    
-        
-        
-        
     data_ingestion_task = PythonOperator(
-        task_id="data_ingestion",
-        python_callable=data_ingestion,
-    )
-    data_ingestion_task.doc_md = dedent(
-        """\
-    #### Ingestion task
-    this task creates a train and test file.
-    """
+        task_id='data_ingestion',
+        python_callable=start_data_ingestion,
     )
 
-    data_transform_task = PythonOperator(
-        task_id="data_transformation",
-        python_callable=data_transformations,
-    )
-    data_transform_task.doc_md = dedent(
-        """\
-    #### Transformation task
-    this task performs the transformation
-    """
+    data_transformation_task = PythonOperator(
+        task_id='data_transformation',
+        python_callable=start_data_transformation,
+        provide_context=True,
     )
 
-    model_trainer_task = PythonOperator(
-        task_id="model_trainer",
-        python_callable=model_trainer,
+    model_training_task = PythonOperator(
+        task_id='model_training',
+        python_callable=start_model_training,
+        provide_context=True,
     )
-    model_trainer_task.doc_md = dedent(
-        """\
-    #### model trainer task
-    this task perform training
-    """
-    )
-    
-    
 
-
-data_ingestion_task >> data_transform_task >> model_trainer_task 
+    # Set task dependencies
+    data_ingestion_task >> data_transformation_task >> model_training_task 

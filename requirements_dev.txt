@@ -8,7 +8,7 @@ dvc
 ipykernel
 xgboost
 apache-airflow
-
+boto3
 # dev requirements -
 
 pytest==7.1.3

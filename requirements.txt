@@ -9,4 +9,5 @@ mlflow
 dvc
 ipykernel
 xgboost
+boto3
 -e .

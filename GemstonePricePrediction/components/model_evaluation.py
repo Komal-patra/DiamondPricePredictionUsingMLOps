@@ -5,60 +5,57 @@ from urllib.parse import urlparse
 import mlflow
 import mlflow.sklearn
 import numpy as np
-import pickle
 from GemstonePricePrediction.utils.utils import load_object
 
 class ModelEvaluation:
     def __init__(self):
         pass
     
-    def eval_metrics(self,actual, pred):
-        rmse = np.sqrt(mean_squared_error(actual, pred))# here is RMSE
-        mae = mean_absolute_error(actual, pred)# here is MAE
-        r2 = r2_score(actual, pred)# here is r3 value
+    @staticmethod
+    def eval_metrics(actual, pred):
+        """
+        Evaluate the performance of the model using various metrics.
+        """
+        rmse = np.sqrt(mean_squared_error(actual, pred))  # RMSE
+        mae = mean_absolute_error(actual, pred)  # MAE
+        r2 = r2_score(actual, pred)  # R^2
         return rmse, mae, r2
 
-
-    def initiate_model_evaluation(self,train_array,test_array):
+    def initiate_model_evaluation(self, train_array, test_array):
+        """
+        Load the model, make predictions on the test set, and log the results to MLflow.
+        """
         try:
-            X_test,y_test=(test_array[:,:-1], test_array[:,-1])
+            # Separate features and target from test array
+            X_test, y_test = test_array[:, :-1], test_array[:, -1]
 
-            model_path=os.path.join("artifacts","model.pkl")
-            model=load_object(model_path)
+            # Load the pre-trained model
+            model_path = os.path.join("artifacts", "model.pkl")
+            model = load_object(model_path)
 
-        
-
-            #mlflow.set_registry_uri(")
-            
+            # Set the MLflow tracking URI
+            mlflow.set_tracking_uri('http://localhost:5000/')
             tracking_url_type_store = urlparse(mlflow.get_tracking_uri()).scheme
-            
-            print(tracking_url_type_store)
 
-
-
+            # Start an MLflow run
             with mlflow.start_run():
-
+                # Make predictions on the test set
                 predicted_qualities = model.predict(X_test)
 
-                (rmse, mae, r2) = self.eval_metrics(y_test, predicted_qualities)
+                # Evaluate the model
+                rmse, mae, r2 = self.eval_metrics(y_test, predicted_qualities)
 
+                # Log the metrics to MLflow
                 mlflow.log_metric("rmse", rmse)
-                mlflow.log_metric("r2", r2)
                 mlflow.log_metric("mae", mae)
+                mlflow.log_metric("r2", r2)
 
-
-                # this condition is for the dagshub
-                # Model registry does not work with file store
+                # Log the model to MLflow
                 if tracking_url_type_store != "file":
-
-                    # Register the model
-                    # There are other ways to use the Model Registry, which depends on the use case,
-                    # please refer to the doc for more information:
-                    # https://mlflow.org/docs/latest/model-registry.html#api-workflow
                     mlflow.sklearn.log_model(model, "model", registered_model_name="ml_model")
-                # it is for the local 
                 else:
                     mlflow.sklearn.log_model(model, "model")
-           
+        
         except Exception as e:
             raise e
+
