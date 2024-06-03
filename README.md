@@ -60,3 +60,34 @@ python src\GemstonePricePrediction\pipelines\training_pipeline.py
 python app.py
 ```
 
+## To run the Airflow, open the brwoser with below url:
+```
+http://localhost:8080/
+```
+
+## To run the Mlflow web page:
+```
+mlflow ui
+```
+they will provide the Mlflow tracking URI which then can be open in web browser
+
+## To implement dvc:
+```
+dvc init
+```
+
+```
+dvc repro
+```
+
+```
+dvc add data\DiamondGemstone.csv
+```
+
+```
+dvc commit
+```
+
+```
+dvc push
+```
